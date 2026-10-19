@@ -28,7 +28,6 @@ const dinero = (cantidad) =>
     currency: 'MXN',
   }).format(cantidad);
 
-
 // Convierte una fecha al formato legible para mostrarla en la tabla
 const fechas = (fecha) =>
   new Date(`${fecha}T12:00:00`).toLocaleDateString('es-MX', {
@@ -47,6 +46,7 @@ const categorias = [
 ];
 
 export default function Dashboard() {
+  const navigate = useNavigate();
   const [gastos, setGastos] = useState([]);
   const [cargandogastos, setCargandogasto] = useState(true);
   const [errocargarGastos, setErrocargarGastos] = useState('');
@@ -104,7 +104,7 @@ export default function Dashboard() {
     };
   }, []);
 
-  // filtrar gastos por concepto,categoria y mes 
+  // filtrar gastos por concepto,categoria y mes
   const gastosFiltrados = gastos.filter((gasto) => {
     const coincideTexto = gasto.concept
       .toLowerCase()
@@ -136,20 +136,28 @@ export default function Dashboard() {
       try {
         setCargandousuarios(true);
         const respuesta = await api.get('/api/usuario_actual');
-        if (activo) {
+        if (activo && respuesta.data) {
           setUsuarios(respuesta.data);
         }
       } catch (error) {
         console.error('Error al cargar los usuarios:', error);
+        //si la sesion no es valida podemos enviar al login
+        if (activo && error.response?.status === 401) {
+          navigate('/login');
+        }
+      } finally {
+        if (activo) {
+          setCargandousuarios(false);
+        }
       }
     }
     CargarUsuario();
     return () => {
       activo = false;
     };
-  }, []);
+  }, [navigate]);
 
-  //tarjetas para vista 
+  //tarjetas para vista
   const tarjetas = [
     {
       titulo: 'Total gastado',
@@ -211,6 +219,23 @@ export default function Dashboard() {
     }
   };
 
+  //cerrar sesion
+  const handleCerrarSesion = async () => {
+    try {
+      // Se envía la petición DELETE para finalizar la sesión en el backend
+      await api.delete('/api/sesion');
+    } catch (error) {
+      console.error('Error al cerrar sesión:', error);
+    } finally {
+      //limpiamos la informacion del usuario en memoria
+      setUsuarios(null);
+      setGastos([]);
+      // Se redirige al usuario a la página de login
+      navigate('/login', { replace: true });
+    }
+  };
+
+  
   return (
     <div className="min-h-screen bg-slate-50 text-slate-800">
       <div className="flex min-h-screen">
@@ -266,6 +291,7 @@ export default function Dashboard() {
             <button
               type="button"
               className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-slate-600 hover:bg-slate-100"
+              onClick={handleCerrarSesion}
             >
               <LogOut size={19} />
               Cerrar sesión
