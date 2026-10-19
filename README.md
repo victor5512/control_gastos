@@ -79,3 +79,10 @@ Para ver el detalle de las pruebas ejecutadas:
 ```bash
 pytest -v
 ```
+🧠 Decisiones técnicas y justificación
+1. Separación entre frontend y backend: permite mantener la interfaz y la lógica del servidor independientes, facilitando su mantenimiento y evolución.
+2. Tailwind CSS para los estilos: permite desarrollar una interfaz consistente y adaptable a diferentes tamaños de pantalla sin depender de hojas de estilos extensas
+
+🔧 Mejoras pendientes y posibles evoluciones
+1. Reportes financieros: incorporar gráficas y comparativas de gastos por categoría y periodo.
+2. Experiencia de usuario: seguir mejorando la accesibilidad, la adaptación a dispositivos móviles y los estados de carga y error.
