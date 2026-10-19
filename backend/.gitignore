@@ -1,0 +1,20 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.coverage
+
+#variables de entorno
+.env
+.env.*
+!.env.example
+
+#Node
+node_modules/
+dist/
+#IDE y sistema
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
